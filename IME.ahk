@@ -1,7 +1,24 @@
+;=====分组配置
+;中文输入法的分组
+GroupAdd,cn,ahk_exe QQ.exe  ;QQ
+GroupAdd,cn,ahk_exe WINWORD.EXE ;word
+GroupAdd,cn,ahk_exe MindManager.exe
+
+;英文输入法的分组
+GroupAdd,en,ahk_exe devenv.exe  ;Visual Studio
+GroupAdd,en,ahk_exe dopus.exe 
+GroupAdd,en,ahk_class Notepad++
+
+;编辑器分组
+GroupAdd,editor,ahk_exe devenv.exe  ;Visual Studio
+GroupAdd,editor,ahk_exe notepad.exe ;记事本
+GroupAdd,editor,ahk_class Notepad++
+
+
+
+
 ;函数
-setLayout(Layout,WinID){
-DllCall("SendMessage", "UInt", WinID, "UInt", "80", "UInt", "1", "UInt", (DllCall("LoadKeyboardLayout", "Str", Layout, "UInt", "257")))
-}
+;从剪贴板输入到界面
 sendbyclip(var_string)
 {
     ClipboardOld = %ClipboardAll%
@@ -13,95 +30,96 @@ sendbyclip(var_string)
 }
 
 
+setChineseLayout(){
+	;发送中文输入法切换快捷键，请根据实际情况设置。
+	send {Ctrl Down}{Shift}
+	send {Ctrl Down},
+	send {Ctrl Down}{Shift}
+	send {Ctrl Down},
+	send {Ctrl Up}
+}
+setEnglishLayout(){
+	;发送英文输入法切换快捷键，请根据实际情况设置。
+	send {Ctrl Down}{Shift}
+	send {Ctrl Down},
+	send {Ctrl Down}{Shift}
+	send {Ctrl Down},
 
+	send {Ctrl Down}{Space}
+	send {Ctrl Up}
+}
+
+;监控消息回调ShellMessage，并自动设置输入法
 Gui +LastFound
 hWnd := WinExist()
 DllCall( "RegisterShellHookWindow", UInt,hWnd )
 MsgNum := DllCall( "RegisterWindowMessage", Str,"SHELLHOOK" )
-
 OnMessage( MsgNum, "ShellMessage")
-Return
-
 
 ShellMessage( wParam,lParam ) {
-  If ( wParam = 1 )
-  {
+	If ( wParam = 1 )
+	{
 		WinGetclass, WinClass, ahk_id %lParam%
 		;MsgBox,%Winclass%
-		;使用中文输入法
-		If Winclass in TXGuiFoundation,       ;需要开启中文输入的窗口类名
+		Sleep, 1000
+		WinActivate,ahk_class %Winclass%
+		;WinGetActiveTitle, Title
+		;MsgBox, The active window is "%Title%".
+		IfWinActive,ahk_group cn
 		{
-		  winget,WinID,id,ahk_class %WinClass%
-		  ;中文
-		  setLayout("00000804",WinID)
+			setChineseLayout()
+			TrayTip,AHK, 已自动切换到中文输入法
+			return
 		}
-
-		;使用英文输入法
-		if (InStr(Winclass,"HwndWrapper") or InStr(Winclass,"dopus") or Winclass in Notepad++,OpusApp)
+		IfWinActive,ahk_group en
 		{
-			  winget,WinID,id,ahk_class %WinClass%
-
-			  ;英文
-			  setLayout("00000409",WinID)
-
+			setEnglishLayout()
+			TrayTip,AHK, 已自动切换到英文输入法
+			return
 		}
-
-
 	}
 }
 
-;在vs2012中自动切换中英文输入法
-#IfWinActive, ahk_class HwndWrapper
+;在所有编辑器中自动切换中英文输入法
+#IfWinActive,ahk_group editor
 :*:// ::
 	;//加空格 时 切换到中文输入法
-	winget,WinID,id,ahk_class HwndWrapper
-	setLayout("00000409",WinID)
+	setEnglishLayout()
 	sendbyclip("//")
-	setLayout("00000804",WinID)
+	setChineseLayout()
 return
 :Z*:///::
 	;///注释时 切换到中文输入法（也可以输入///加空格）
-	winget,WinID,id,ahk_class HwndWrapper
-	setLayout("00000409",WinID)
+	setEnglishLayout()
 	sendbyclip("//")
 	SendInput /
-	setLayout("00000804",WinID)
+	setChineseLayout()
 return
-
-#IfWinActive, ahk_class HwndWrapper
 :*:" ::
 	;引号加空格 时 切换到中文输入法
-	winget,WinID,id,ahk_class HwndWrapper
-	setLayout("00000409",WinID)
+	setEnglishLayout()
 	SendInput "
-	setLayout("00000804",WinID)
+	setChineseLayout()
 return
-
-#IfWinActive, ahk_class HwndWrapper
 :*:`;`n::
 	;分号加回车 时 切换的英文输入法
-	winget,WinID,id,ahk_class HwndWrapper
-	setLayout("00000409",WinID)
+	setEnglishLayout()
 	sendbyclip(";")
 	SendInput `n
 return
-
-#IfWinActive, ahk_class HwndWrapper
 :Z?*:`;`;::
 	;两个分号时 切换的英文输入法
-	winget,WinID,id,ahk_class HwndWrapper
-	setLayout("00000409",WinID)
+	setEnglishLayout()
 return
-
-#IfWinActive, ahk_class HwndWrapper
 :Z?*:  ::
 	;输入两个空格 切换的中文输入法
-	winget,WinID,id,ahk_class HwndWrapper
-	setLayout("00000409",WinID)
-	setLayout("00000804",WinID)
+	setEnglishLayout()
+	setChineseLayout()
 return
 
 #IfWinActive
+
+
 
 
 

@@ -6,7 +6,7 @@
 ;脚本重启
 !^r::
 Reload  ; Reload the script by Alt+Ctrl+R.
-TrayTip,AHK, 脚本已重启1
+TrayTip,AHK, 脚本已重启
 Return
 
 
@@ -38,7 +38,7 @@ return
 
 	if fileexist("Temp.ahk")
 	FileDelete Temp.ahk
-	FileAppend send {Right}`=`n,Temp.ahk
+	FileAppend send {End}`=`n,Temp.ahk
 	FileAppend send `% %Q% ,Temp.ahk
 	run Temp.ahk
     Clipboard = %ClipboardOld%  ; Restore previous contents of clipboard.
