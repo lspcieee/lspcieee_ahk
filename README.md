@@ -29,6 +29,12 @@
 
 代码测试通过环境：win10 64 位，vs2012/vs2013/vs2015/Notepad++/Notepad，ahkv1.1.23.01
 
+为了方便未安装ahk的童鞋，增加编译后的exe文件，默认设置如下：
+- AHK切换中文输入法发送快捷键为Control+（搜狗输入法默认设置）,切换英文输入法发送快捷键为Ctrl+Space
+- 已设置Visual Studio，Notepad++，记事本为编辑器，支持开发自动切换：
+- 已设置qq，word，MindManager自动切换为中文输入法。
+- 已经设置Visual Studio，Notepad++，Directory Opus自动切换为英文输入法。
+如需要变更，请下载ahk代码修改
 
 
 
