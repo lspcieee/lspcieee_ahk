@@ -8,15 +8,23 @@
 
 
 ;=====分组配置
-;中文输入法的分组
+;新开窗口时，切换到中文输入法的分组
 GroupAdd,cn,ahk_exe QQ.exe  ;QQ
 GroupAdd,cn,ahk_exe WINWORD.EXE ;word
+GroupAdd,cn,ahk_exe wps.exe ;wps
 GroupAdd,cn,ahk_exe MindManager.exe
 
-;英文输入法的分组
+;新开窗口时，切换到英文输入法的分组
 GroupAdd,en,ahk_exe devenv.exe  ;Visual Studio
 GroupAdd,en,ahk_exe dopus.exe 
 GroupAdd,en,ahk_class Notepad++
+GroupAdd,en,ahk_class Listary_WidgetWin_0
+
+;窗口切换时，切换到中文输入法
+GroupAdd,cn32772,ahk_exe QQ.exe  ;QQ
+
+;窗口切换时，切换到英文输入法
+GroupAdd,en32772,ahk_class Listary_WidgetWin_0
 
 ;编辑器分组
 GroupAdd,editor,ahk_exe devenv.exe  ;Visual Studio
@@ -54,7 +62,8 @@ setEnglishLayout(){
 	send {Ctrl Down}{Shift}
 	send {Ctrl Down},
 
-	send {Ctrl Down}{Space}
+	;send {Ctrl Down}{Space} ;搜狗输入法更新后，使用ctrl+Space仍在搜狗输入法，更换快捷键
+	send {Ctrl Down}{Shift}
 	send {Ctrl Up}
 }
 
@@ -66,6 +75,25 @@ MsgNum := DllCall( "RegisterWindowMessage", Str,"SHELLHOOK" )
 OnMessage( MsgNum, "ShellMessage")
 
 ShellMessage( wParam,lParam ) {
+
+;1 顶级窗体被创建 
+;2 顶级窗体即将被关闭 
+;3 SHELL 的主窗体将被激活 
+;4 顶级窗体被激活 
+;5 顶级窗体被最大化或最小化 
+;6 Windows 任务栏被刷新，也可以理解成标题变更
+;7 任务列表的内容被选中 
+;8 中英文切换或输入法切换 
+;9 显示系统菜单 
+;10 顶级窗体被强制关闭 
+;11 
+;12 没有被程序处理的APPCOMMAND。见WM_APPCOMMAND 
+;13 wParam=被替换的顶级窗口的hWnd 
+;14 wParam=替换顶级窗口的窗口hWnd 
+;&H8000& 掩码 
+;53 全屏
+;54 退出全屏
+;32772 窗口切换
 	If ( wParam = 1 )
 	{
 		WinGetclass, WinClass, ahk_id %lParam%
@@ -84,6 +112,21 @@ ShellMessage( wParam,lParam ) {
 		{
 			setEnglishLayout()
 			TrayTip,AHK, 已自动切换到英文输入法
+			return
+		}
+	}
+	If ( wParam = 32772 )
+	{
+		IfWinActive,ahk_group cn32772
+		{
+			setChineseLayout()
+			;TrayTip,AHK, 已自动切换到中文输入法
+			return
+		}
+		IfWinActive,ahk_group en32772
+		{
+			setEnglishLayout()
+			;TrayTip,AHK, 已自动切换到英文输入法
 			return
 		}
 	}
