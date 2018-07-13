@@ -96,10 +96,10 @@ ShellMessage( wParam,lParam ) {
 ;32772 ´°¿ÚÇÐ»»
 	If ( wParam = 1 )
 	{
-		WinGetclass, WinClass, ahk_id %lParam%
+		;WinGetclass, WinClass, ahk_id %lParam%
 		;MsgBox,%Winclass%
 		Sleep, 1000
-		WinActivate,ahk_class %Winclass%
+		;WinActivate,ahk_class %Winclass%
 		;WinGetActiveTitle, Title
 		;MsgBox, The active window is "%Title%".
 		IfWinActive,ahk_group cn
