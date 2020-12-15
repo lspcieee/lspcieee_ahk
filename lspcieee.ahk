@@ -20,9 +20,9 @@ Return
 
 
 ;有道词典快捷键打开（有道词典已经设置为关闭窗口自动关闭程序，节省性能）
-!l::
-Run,C:\Users\lspcieee\AppData\Local\Youdao\Dict\Application\YodaoDict.exe
-Return
+;!l::
+;Run,C:\Users\lspcieee\AppData\Local\Youdao\Dict\Application\YodaoDict.exe
+;Return
 
 
 :*::d::  ; 当前日期

@@ -26,6 +26,7 @@ GroupAdd,cn32772,ahk_exe QQ.exe  ;QQ
 ;窗口切换时，切换到英文输入法
 GroupAdd,en32772,ahk_class Listary_WidgetWin_0
 
+
 ;编辑器分组
 GroupAdd,editor,ahk_exe devenv.exe  ;Visual Studio
 GroupAdd,editor,ahk_exe notepad.exe ;记事本
@@ -128,6 +129,12 @@ ShellMessage( wParam,lParam ) {
 			setEnglishLayout()
 			;TrayTip,AHK, 已自动切换到英文输入法
 			return
+		}
+		;mlo切换到窗口时
+		IfWinActive, ahk_class TfrmMyLifeMain
+		{
+			send {F9}
+			;TrayTip,AHK, 已自动同步MLO
 		}
 	}
 }
